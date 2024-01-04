@@ -2,9 +2,9 @@ name: Test the Action
 on: [push, workflow_dispatch]
 
 jobs:
-  run_action:
+  run_action_default:
     runs-on: ubuntu-latest
-    name: Run the action defined in this repository
+    name: Run the action defined in this repository, with default options
     steps:
       # To use this repository's action,
       # you must check out the repository
@@ -25,6 +25,42 @@ jobs:
         uses: ./ # Uses an action in the root directory
         with:
           run: ./background.sh &
+      - name: Foreground Job
+        run: |
+          echo "Foreground $(date)"
+          sleep 5
+          echo "Foreground $(date)"
+          sleep 5
+          echo "Foreground $(date)"
+
+  run_action_with_options:
+    runs-on: ubuntu-latest
+    name: Run the action defined in this repository, with custom options
+    steps:
+      # To use this repository's action,
+      # you must check out the repository
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Create background script
+        run: |
+          mkdir -p scripts
+          cat <<EOF > scripts/background.sh
+          #!/bin/bash
+          echo "Background \$(date)"
+          sleep 5
+          echo "Background \$(date)"
+          sleep 5
+          echo "Background \$(date)"
+          EOF
+          chmod +x background.sh
+      - name: Test Action
+        uses: ./ # Uses an action in the root directory
+        with:
+          run: ./background.sh &
+          working-directory: scripts
+          tail: false
+          log-output: false
+
       - name: Foreground Job
         run: |
           echo "Foreground $(date)"
