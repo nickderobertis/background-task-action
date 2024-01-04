@@ -14,14 +14,21 @@ jobs:
         run: |
           cat <<EOF > background.sh
           #!/bin/bash
-          echo "$(date)"
+          echo "Background \$(date)"
           sleep 5
-          echo "$(date)"
+          echo "Background \$(date)"
           sleep 5
-          echo "$(date)"
+          echo "Background \$(date)"
           EOF
           chmod +x background.sh
       - name: Test Action
         uses: ./ # Uses an action in the root directory
         with:
           run: ./background.sh &
+      - name: Foreground Job
+        run: |
+          echo "Foreground $(date)"
+          sleep 5
+          echo "Foreground $(date)"
+          sleep 5
+          echo "Foreground $(date)"
