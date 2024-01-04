@@ -52,7 +52,7 @@ jobs:
           sleep 5
           echo "Background \$(date)"
           EOF
-          chmod +x background.sh
+          chmod +x scripts/background.sh
       - name: Test Action
         uses: ./ # Uses an action in the root directory
         with:
