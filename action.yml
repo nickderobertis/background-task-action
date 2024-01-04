@@ -1,0 +1,6 @@
+name: 'Background Task Github Action'
+description: 'Run Github Actions commands in the background and show their logs separately'
+runs:
+  using: node16
+  main: "dist/index.js"
+  

@@ -14,7 +14,16 @@
   "applied_templates": [
     {
       "name": "copier-github-actions-semantic-release",
-      "data": {},
+      "data": {
+        "repo_name": "background-task-action",
+        "full_name": "Background Task Github Action",
+        "action_type": "typescript",
+        "repo_username": "nickderobertis",
+        "short_description": "Run Github Actions commands in the background and show their logs separately",
+        "package_author": "Nick DeRobertis",
+        "author_email": "derobertis.nick@gmail.com",
+        "main_branch_name": "main"
+      },
       "version": "89e81330c5b5933ae9d380969b35766b9b1036a8",
       "add_mode": "local",
       "root": "."
