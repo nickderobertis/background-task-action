@@ -1,6 +1,25 @@
-name: 'Background Task Github Action'
-description: 'Run Github Actions commands in the background and show their logs separately'
+name: "Background Task Github Action"
+description: "Run Github Actions commands in the background and show their logs separately"
+inputs:
+  run:
+    description: commands to run, supports multi-line commands (to background multiple processes, use & at the end of each line)
+    required: true
+  working-directory:
+    description: the current working directory for the shell running the commands
+    required: false
+  tail:
+    description: tail log output while waiting on resources to be available [stderr,stdout,true,false]
+    default: true
+  log-output:
+    description: specify which logs (stdout,stderr) to output post-run (after the run has completed or failed) (stderr,stdout,true,false)
+    default: stdout,stderr
+  log-output-resume:
+    description: truncate tailed stderr/stdout output from post-run logs (i.e. deduplicate log output) [stderr,stdout,true,false]
+    default: false
+  log-output-if:
+    description: control if post-run logging occurs (timeout,early-exit,failure,true,false)
+    default: true
 runs:
   using: node16
   main: "dist/index.js"
-  
+  post: "dist/index.js"

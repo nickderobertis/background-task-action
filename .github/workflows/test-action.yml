@@ -10,5 +10,18 @@ jobs:
       # you must check out the repository
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Create background script
+        run: |
+          cat <<EOF > background.sh
+          #!/bin/bash
+          echo "$(date)"
+          sleep 5
+          echo "$(date)"
+          sleep 5
+          echo "$(date)"
+          EOF
+          chmod +x background.sh
       - name: Test Action
         uses: ./ # Uses an action in the root directory
+        with:
+          run: ./background.sh &
