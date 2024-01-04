@@ -1,15 +1,15 @@
 import * as core from "@actions/core";
+import runMain from "./run";
+import postRunMain from "./post-run";
+
+const POST_RUN = core.getState("post-run");
 
 async function run(): Promise<void> {
-  try {
-    console.log(`Hello world!`);
-  } catch (error) {
-    if (error instanceof Error) {
-      core.setFailed(error.message);
-      throw error;
-    } else {
-      core.setFailed(JSON.stringify(error));
-    }
+  // serve as the entry-point for both main and post-run invocations
+  if (POST_RUN) {
+    postRunMain();
+  } else {
+    runMain();
   }
 }
 
