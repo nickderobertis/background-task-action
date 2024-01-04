@@ -2218,36 +2218,7 @@ const path_1 = __importDefault(__nccwpck_require__(17));
 const child_process_1 = __nccwpck_require__(81);
 const input_1 = __importDefault(__nccwpck_require__(139));
 const { run, workingDirectory, tail, logOutput } = input_1.default;
-const POST_RUN = core.getState("post-run");
 let stderr, stdout;
-if (core.isDebug()) {
-    console.log(process.env);
-}
-// serve as the entry-point for both main and post-run invocations
-if (POST_RUN) {
-    __nccwpck_require__(570);
-}
-else {
-    (function () {
-        return __awaiter(this, void 0, void 0, function* () {
-            core.saveState("post-run", process.pid);
-            const cwd = workingDirectory || process.env.GITHUB_WORKSPACE || "./";
-            const stdErrFile = path_1.default.join(cwd, `${process.pid}.err`);
-            const stdOutFile = path_1.default.join(cwd, `${process.pid}.out`);
-            const checkStderr = setInterval(() => {
-                stderr = TailWrapper(stdErrFile, tail.stderr, core.info);
-                if (stderr)
-                    clearInterval(checkStderr);
-            }, 1000);
-            const checkStdout = setInterval(() => {
-                stdout = TailWrapper(stdOutFile, tail.stdout, core.info);
-                if (stdout)
-                    clearInterval(checkStdout);
-            }, 1000);
-            runCommand(run);
-        });
-    })();
-}
 function exitHandler(error, reason) {
     return __awaiter(this, void 0, void 0, function* () {
         if (stdout && stdout.unwatch)
@@ -2294,6 +2265,9 @@ function TailWrapper(filename, shouldTail, output) {
 }
 function runMain() {
     return __awaiter(this, void 0, void 0, function* () {
+        if (core.isDebug()) {
+            console.log(process.env);
+        }
         core.saveState("post-run", process.pid);
         const cwd = workingDirectory || process.env.GITHUB_WORKSPACE || "./";
         const stdErrFile = path_1.default.join(cwd, `${process.pid}.err`);
@@ -2309,6 +2283,7 @@ function runMain() {
                 clearInterval(checkStdout);
         }, 1000);
         runCommand(run);
+        exitHandler(null, "success");
     });
 }
 exports["default"] = runMain;

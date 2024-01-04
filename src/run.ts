@@ -9,40 +9,10 @@ type FullTail = Tail & {
 };
 
 const { run, workingDirectory, tail, logOutput } = INPUTS;
-const POST_RUN: string | undefined = core.getState("post-run");
 
 let stderr: FullTail | undefined, stdout: FullTail | undefined;
 
-if (core.isDebug()) {
-  console.log(process.env);
-}
-
-// serve as the entry-point for both main and post-run invocations
-if (POST_RUN) {
-  require("./post-run");
-} else {
-  (async function () {
-    core.saveState("post-run", process.pid);
-
-    const cwd = workingDirectory || process.env.GITHUB_WORKSPACE || "./";
-    const stdErrFile = path.join(cwd, `${process.pid}.err`);
-    const stdOutFile = path.join(cwd, `${process.pid}.out`);
-
-    const checkStderr = setInterval(() => {
-      stderr = TailWrapper(stdErrFile, tail.stderr, core.info);
-      if (stderr) clearInterval(checkStderr);
-    }, 1000);
-
-    const checkStdout = setInterval(() => {
-      stdout = TailWrapper(stdOutFile, tail.stdout, core.info);
-      if (stdout) clearInterval(checkStdout);
-    }, 1000);
-
-    runCommand(run);
-  })();
-}
-
-async function exitHandler(error: Error, reason: string) {
+async function exitHandler(error: Error | null, reason: string) {
   if (stdout && stdout.unwatch) stdout.unwatch();
   if (stderr && stderr.unwatch) stderr.unwatch();
 
@@ -100,6 +70,10 @@ function TailWrapper(
 }
 
 export default async function runMain() {
+  if (core.isDebug()) {
+    console.log(process.env);
+  }
+
   core.saveState("post-run", process.pid);
 
   const cwd = workingDirectory || process.env.GITHUB_WORKSPACE || "./";
@@ -117,4 +91,6 @@ export default async function runMain() {
   }, 1000);
 
   runCommand(run);
+
+  exitHandler(null, "success");
 }
